@@ -22,13 +22,43 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('roles', RoleController::class);
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
-    Route::get('roles/{role}/permissions', [RoleController::class, 'editPermissions'])->name('roles.permissions.edit');
-    Route::post('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
 
-    Route::get('users/{user}/roles', [UserController::class, 'editRoles'])->name('users.roles.edit');
-    Route::post('users/{user}/roles', [UserController::class, 'updateRoles'])->name('users.roles.update');
+    Route::get('/users/create', [UserController::class, 'create'])
+        ->middleware('permission:users.create')
+        ->name('users.create');
+
+    Route::post('/users', [UserController::class, 'store'])
+        ->middleware('permission:users.create')
+        ->name('users.store');
+
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+        ->middleware('permission:users.edit')
+        ->name('users.edit');
+
+    Route::put('/users/{user}', [UserController::class, 'update'])
+        ->middleware('permission:users.edit')
+        ->name('users.update');
+
+    Route::delete('/users/{user}')->middleware('permission:users.delete')->name('users.destroy');
+
+    Route::resource('roles', RoleController::class)
+        ->except(['show'])
+        ->middleware('permission:manage roles');
+
+    Route::prefix('roles/{role}')->group(function () {
+        Route::get('permissions', [RoleController::class, 'editPermissions'])->name('roles.permissions.edit');
+
+        Route::post('permissions', [RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
+    });
+
+    Route::prefix('users/{user}')->group(function () {
+        Route::get('roles', [UserController::class, 'editRoles'])->name('users.roles.edit');
+
+        Route::post('roles', [UserController::class, 'updateRoles'])->name('users.roles.update');
+    });
 });
 
 Route::middleware(['role:admin'])->group(function () {

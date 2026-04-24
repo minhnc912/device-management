@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -14,12 +14,7 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = [
-            'view device',
-            'create device',
-            'edit device',
-            'delete device',
-        ];
+        $permissions = ['view device', 'create device', 'edit device', 'delete device'];
 
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
@@ -30,6 +25,16 @@ class RolePermissionSeeder extends Seeder
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
         }
+
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('12345678'),
+            ],
+        );
+
+        $admin->assignRole('admin');
 
         // Assign all permissions to the admin role
         Role::findByName('admin')->givePermissionTo(Permission::all());

@@ -1,15 +1,32 @@
-<h2>{{ $role->name }}</h2>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl">
+            Permissions for: {{ $role->name }}
+        </h2>
+    </x-slot>
 
-<form method="post">
-    @csrf
+    <div class="p-6">
 
-    @foreach ($permissions as $permission)
-        <div>
-            <input type="checkbox" name="permissions[]" value="{{ $permission->name }}"
-                {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
-            {{ $permission->name }}
-        </div>
-    @endforeach
+        <form method="POST">
+            @csrf
 
-    <button>Save</button>
-</form>
+            <div class="grid grid-cols-2 gap-3">
+                @foreach($permissions as $permission)
+                    <label class="flex items-center space-x-2 border p-2 rounded">
+                        <input type="checkbox"
+                               name="permissions[]"
+                               value="{{ $permission->name }}"
+                               {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
+
+                        <span>{{ $permission->name }}</span>
+                    </label>
+                @endforeach
+            </div>
+
+            <button class="mt-4 bg-green-500 text-white px-4 py-2 rounded">
+                Save
+            </button>
+        </form>
+
+    </div>
+</x-app-layout>
