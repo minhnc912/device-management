@@ -8,14 +8,20 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    public function index()
+    {
+        $users = User::all();
+        return view('users.index', compact('users'));
+    }
     public function editRoles(User $user)
     {
         $roles = Role::all();
         return view('users.roles', compact('user', 'roles'));
     }
 
-    public function updateRoles(Request $request, User $user) {
-        $user -> syncRoles($request->roles ?? []);
+    public function updateRoles(Request $request, User $user)
+    {
+        $user->syncRoles($request->roles ?? []);
         return back();
     }
 }

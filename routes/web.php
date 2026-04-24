@@ -19,12 +19,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users', [UserController::class, 'index'])
+        ->middleware('permission:users.view')
+        ->name('users.index');
 
-    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}', [UserController::class, 'show'])
+        ->middleware('permission:users.view')
+        ->name('users.show');
 
     Route::get('/users/create', [UserController::class, 'create'])
         ->middleware('permission:users.create')
@@ -46,23 +48,27 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('roles', RoleController::class)
         ->except(['show'])
-        ->middleware('permission:manage roles');
+        ->middleware('permission:roles.view');
 
     Route::prefix('roles/{role}')->group(function () {
-        Route::get('permissions', [RoleController::class, 'editPermissions'])->name('roles.permissions.edit');
+        Route::get('permissions', [RoleController::class, 'editPermissions'])
+            ->middleware('permission:roles.permissions.manage')
+            ->name('roles.permissions.edit');
 
-        Route::post('permissions', [RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
+        Route::post('permissions', [RoleController::class, 'updatePermissions'])
+            ->middleware('permission:roles.permissions.manage')
+            ->name('roles.permissions.update');
     });
 
     Route::prefix('users/{user}')->group(function () {
-        Route::get('roles', [UserController::class, 'editRoles'])->name('users.roles.edit');
+        Route::get('roles', [UserController::class, 'editRoles'])
+            ->middleware('permission:users.edit')
+            ->name('users.roles.edit');
 
-        Route::post('roles', [UserController::class, 'updateRoles'])->name('users.roles.update');
+        Route::post('roles', [UserController::class, 'updateRoles'])
+            ->middleware('permission:users.edit')
+            ->name('users.roles.update');
     });
-});
-
-Route::middleware(['role:admin'])->group(function () {
-    Route::resource('roles', RoleController::class);
 });
 
 require __DIR__ . '/auth.php';
