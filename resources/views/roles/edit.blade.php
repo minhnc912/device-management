@@ -1,22 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl">
-            Create Role
+            Edit Role: {{ $role->name }}
         </h2>
     </x-slot>
 
     <div class="p-6">
 
-        <form method="POST" action="{{ route('roles.store') }}">
+        <form method="POST" action="{{ route('roles.update', $role) }}">
             @csrf
-            @method('POST')
+            @method('PUT')
 
             <div class="space-y-4">
 
                 <div>
                     <label class="block mb-1">Role Name</label>
 
-                    <input type="text" name="name" placeholder="Enter role name"
+                    <input type="text" name="name" value="{{ old('name', $role->name) }}"
                         class="border rounded px-3 py-2 w-full">
 
                     @error('name')
@@ -30,9 +30,10 @@
                         ← Back
                     </a>
                     <button class="bg-blue-600 text-white px-4 py-2 rounded">
-                        Create Role
+                        Update
                     </button>
                 </div>
+
 
             </div>
 

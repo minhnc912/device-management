@@ -8,10 +8,30 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function index()
+    public function __construct()
     {
-        $users = User::all();
-        return view('users.index', compact('users'));
+        $this->middleware('permission:users.view')->only(['index', 'show']);
+        $this->middleware('permission:users.create')->only(['create', 'store']);
+        $this->middleware('permission:users.edit')->only(['edit', 'update', 'editRoles', 'updateRoles']);
+        $this->middleware('permission:users.delete')->only(['destroy']);
+    }
+    public function index(Request $request)
+    {
+        $query = User::query();
+
+        if ($request->search) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->role) {
+            $query->role($request->role);
+        }
+
+        $users = $query->get();
+
+        $roles = Role::all();
+
+        return view('users.index', compact('users', 'roles'));
     }
     public function editRoles(User $user)
     {

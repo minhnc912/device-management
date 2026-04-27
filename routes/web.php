@@ -20,54 +20,24 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/users', [UserController::class, 'index'])
-        ->middleware('permission:users.view')
-        ->name('users.index');
+    // User Management
+    Route::resource('users', UserController::class);
 
-    Route::get('/users/{user}', [UserController::class, 'show'])
-        ->middleware('permission:users.view')
-        ->name('users.show');
+    // Role Management
+    Route::resource('roles', RoleController::class);
 
-    Route::get('/users/create', [UserController::class, 'create'])
-        ->middleware('permission:users.create')
-        ->name('users.create');
-
-    Route::post('/users', [UserController::class, 'store'])
-        ->middleware('permission:users.create')
-        ->name('users.store');
-
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])
-        ->middleware('permission:users.edit')
-        ->name('users.edit');
-
-    Route::put('/users/{user}', [UserController::class, 'update'])
-        ->middleware('permission:users.edit')
-        ->name('users.update');
-
-    Route::delete('/users/{user}')->middleware('permission:users.delete')->name('users.destroy');
-
-    Route::resource('roles', RoleController::class)
-        ->except(['show'])
-        ->middleware('permission:roles.view');
-
+    // Role Permissions Management
     Route::prefix('roles/{role}')->group(function () {
-        Route::get('permissions', [RoleController::class, 'editPermissions'])
-            ->middleware('permission:roles.permissions.manage')
-            ->name('roles.permissions.edit');
+        Route::get('permissions', [RoleController::class, 'editPermissions'])->name('roles.permissions.edit');
 
-        Route::post('permissions', [RoleController::class, 'updatePermissions'])
-            ->middleware('permission:roles.permissions.manage')
-            ->name('roles.permissions.update');
+        Route::post('permissions', [RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
     });
 
+    // User Roles Management
     Route::prefix('users/{user}')->group(function () {
-        Route::get('roles', [UserController::class, 'editRoles'])
-            ->middleware('permission:users.edit')
-            ->name('users.roles.edit');
+        Route::get('roles', [UserController::class, 'editRoles'])->name('users.roles.edit');
 
-        Route::post('roles', [UserController::class, 'updateRoles'])
-            ->middleware('permission:users.edit')
-            ->name('users.roles.update');
+        Route::post('roles', [UserController::class, 'updateRoles'])->name('users.roles.update');
     });
 });
 
