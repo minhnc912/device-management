@@ -4,6 +4,11 @@
     </x-slot>
 
     <div class="p-6 space-y-4">
+        @if (session('success'))
+            <div class="bg-green-100 text-green-700 p-3 rounded text-sm">
+                {{ session('success') }}
+            </div>
+        @endif
         <div class="flex justify-between items-center">
             <h3 class="text-lg font-medium">Role List</h3>
             @can('roles.create')

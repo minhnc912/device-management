@@ -83,6 +83,6 @@ class RoleController extends Controller
 
         $role->syncPermissions($data['permissions'] ?? []);
 
-        return back()->with('success', 'Permissions updated');
+        return redirect()->route('roles.index')->with('success', 'Permissions updated');
     }
 }

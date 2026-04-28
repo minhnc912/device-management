@@ -5,38 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="p-6">
+    <div class="p-6 max-w-xl mx-auto">
 
-        <form method="POST" action="{{ route('roles.store') }}">
-            @csrf
-            @method('POST')
-
-            <div class="space-y-4">
-
-                <div>
-                    <label class="block mb-1">Role Name</label>
-
-                    <input type="text" name="name" placeholder="Enter role name"
-                        class="border rounded px-3 py-2 w-full">
-
-                    @error('name')
-                        <div class="text-red-500 text-sm">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="flex justify-center items-center gap-6">
-                    <a href="{{ route('roles.index') }}"
-                        class="bg-white text-black px-4 py-2 rounded hover:bg-white/50">
-                        ← Back
-                    </a>
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded">
-                        Create Role
-                    </button>
-                </div>
-
-            </div>
-
-        </form>
+        <x-role.form :action="route('roles.store')" method="POST" button="Create Role" />
 
     </div>
 </x-app-layout>
