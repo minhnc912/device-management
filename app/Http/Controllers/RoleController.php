@@ -35,7 +35,9 @@ class RoleController extends Controller
             'name' => 'required|unique:roles,name',
         ]);
 
-        Role::create(['name' => $request->name]);
+        $role = Role::create(['name' => $request->name]);
+
+        activity_log('create', 'Role', $role->id, 'Created role: ' . $role->name);
 
         return redirect()->route('roles.index');
     }
@@ -53,11 +55,15 @@ class RoleController extends Controller
 
         $role->update($data);
 
+        activity_log('update', 'Role', $role->id, 'Updated role: ' . $role->name);
+
         return redirect()->route('roles.index')->with('success', 'Role updated successfully');
     }
 
     public function destroy(Role $role)
     {
+        activity_log('delete', 'Role', $role->id, 'Deleted role: ' . $role->name);
+
         $role->delete();
 
         return redirect()->route('roles.index')->with('success', 'Role deleted');
@@ -82,6 +88,8 @@ class RoleController extends Controller
         ]);
 
         $role->syncPermissions($data['permissions'] ?? []);
+
+        activity_log('update', 'Role', $role->id, 'Updated permissions for role: ' . $role->name);
 
         return redirect()->route('roles.index')->with('success', 'Permissions updated');
     }

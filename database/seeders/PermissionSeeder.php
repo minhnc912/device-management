@@ -33,6 +33,9 @@ class PermissionSeeder extends Seeder
             'devices.create',
             'devices.edit',
             'devices.delete',
+
+            // ACTIVITY LOGS
+            'logs.view',
         ];
 
         foreach ($permissions as $permission) {

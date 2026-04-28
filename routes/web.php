@@ -1,5 +1,7 @@
     <?php
-    use App\Http\Controllers\DeviceController;
+
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\DeviceController;
     use App\Http\Controllers\ProfileController;
     use App\Http\Controllers\RoleController;
     use App\Http\Controllers\UserController;
@@ -42,6 +44,11 @@
 
         // Devices Management
         Route::resource('devices', DeviceController::class);
+
+        // Activity Logs
+        Route::get('/logs', [ActivityLogController::class, 'index'])
+            ->middleware('permission:logs.view')
+            ->name('logs.index');
     });
 
     require __DIR__ . '/auth.php';

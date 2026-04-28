@@ -44,7 +44,9 @@ class DeviceController extends Controller
             'code' => 'required|unique:devices,code',
         ]);
 
-        Device::create($request->all());
+        $device = Device::create($request->all());
+
+        activity_log('create', 'Device', $device->id, 'Created device: ' . $device->name);
 
         return redirect()->route('devices.index')->with('success', 'Device created');
     }
@@ -64,11 +66,15 @@ class DeviceController extends Controller
 
         $device->update($request->all());
 
+        activity_log('update', 'Device', $device->id, 'Updated device: ' . $device->name);
+
         return redirect()->route('devices.index')->with('success', 'Device updated');
     }
 
     public function destroy(Device $device)
     {
+        activity_log('delete', 'Device', $device->id, 'Deleted device: ' . $device->name);
+
         $device->delete();
 
         return back()->with('success', 'Deleted');
